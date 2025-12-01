@@ -1,10 +1,11 @@
 # MAGI系统 - EVA
+## 副标题：基于多重人格理论的分布式AI决策平台
 
-[![Project Status: Active](https://img.shields.io/badge/Project%20Status-Active-green.svg)](https://github.com/ewanqian/magi-system)
+[![Project Status: Active](https://img.shields.io/badge/Project%20Status-Active-green.svg)](https://github.com/ewanqian/MAGI-System)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Python Version: 3.8+](https://img.shields.io/badge/Python-3.8%2B-blue.svg)](https://www.python.org/)
 [![Framework: Flask](https://img.shields.io/badge/Framework-Flask-lightgrey.svg)](https://flask.palletsprojects.com/)
-[![Documentation: Complete](https://img.shields.io/badge/Documentation-Complete-green.svg)](https://github.com/ewanqian/magi-system/blob/master/README.md)
+[![Documentation: Complete](https://img.shields.io/badge/Documentation-Complete-green.svg)](https://github.com/ewanqian/MAGI-System/blob/master/README.md)
 
 ## 项目愿景
 
@@ -12,13 +13,36 @@ MAGI System 是一个基于《新世纪福音战士》世界观的深度研究�
 
 本项目的核心目标是构建一个超越传统AI范式的系统，融合多重人格理论、分布式决策架构和实时交互能力，能够在各种复杂场景下提供全面、深入的分析和决策支持。
 
+## 与众不同之处
+
+### 1. 基于多重人格理论的决策系统
+MAGI系统将赤木直子的三种人格（科学家、母亲、女人）分别植入独立的决策模块中，使其能够模拟人类的多重身份思考模式，提供更全面、更人性化的决策支持。
+
+### 2. 模块化可扩展的知识库系统
+- **Obsidian原生支持**：直接使用Obsidian等笔记管理软件打开知识库，实现知识的可视化关联和探索
+- **分层模块化设计**：知识库采用分层模块化结构，便于知识的组织、扩展和关联
+- **跨学科知识整合**：整合哲学、人工智能学、计算机科学和认知科学等多学科知识
+- **动态知识推理**：支持基于向量相似度的知识检索和基础的知识推理功能
+
+### 3. 符合EVA世界观的沉浸式体验
+- 忠实还原EVA中的MAGI系统设计
+- 支持EVA风格的UI设计和交互效果
+- 深度融入EVA世界观核心概念
+
+### 4. 支持ACG项目开发的实验性平台
+- 可作为游戏中的NPC决策系统
+- 支持沉浸式体验开发
+- 提供多媒体艺术装置的AI驱动
+
 ## 核心价值
 
 - **跨学科研究平台**：整合哲学、人工智能学、计算机科学和认知科学
-- **可扩展的知识库系统**：支持本地文档管理和Obsidian等工具集成
+- **可扩展的知识库系统**：支持本地文档管理和Obsidian等工具集成，实现知识的可视化关联和探索
 - **模块化架构设计**：支持未来的3D渲染、VR/AR集成和跨平台部署
 - **ACG项目开发的实验性平台**：为ACG项目提供AI决策支持
 - **开源协作生态**：欢迎全球研究者共同参与，推动AI研究的边界
+- **多重人格决策机制**：基于赤木直子的三种人格，提供更全面、更人性化的决策支持
+- **EVA世界观深度融入**：忠实还原EVA中的MAGI系统设计，提供沉浸式体验
 
 ## 项目简介
 
@@ -367,7 +391,7 @@ MIT License
 
 ## 作者
 
-钱誉文 (Ewan Qian)
+ewanqian
 
 ## 致谢
 
