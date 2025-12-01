@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAGI System - EVA</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background-color: #000;
+            color: #ff6b00;
+            overflow: hidden;
+            background-image: 
+                repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255, 107, 0, 0.1) 10px, rgba(255, 107, 0, 0.1) 20px),
+                repeating-linear-gradient(-45deg, transparent, transparent 10px, rgba(0, 255, 255, 0.1) 10px, rgba(0, 255, 255, 0.1) 20px);
+            background-size: 100% 100%;
+            position: relative;
+        }
+
+        /* 六边形背景装饰 */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 20%, rgba(255, 107, 0, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(0, 255, 255, 0.2) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            padding: 20px;
+            gap: 20px;
+            position: relative;
+        }
+
+        /* 顶部状态栏 */
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: rgba(0, 0, 0, 0.8);
+            border: 2px solid #ff6b00;
+            box-shadow: 0 0 20px rgba(255, 107, 0, 0.5);
+            font-size: 0.9em;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-label {
+            color: #00ffff;
+            font-weight: bold;
+        }
+
+        .status-value {
+            color: #ff6b00;
+        }
+
+        /* 主标题 */
+        header {
+            text-align: center;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.8);
+            border: 2px solid #ff6b00;
+            box-shadow: 0 0 30px rgba(255, 107, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 107, 0, 0.3), transparent);
+            animation: scan 3s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 0 0 15px rgba(255, 107, 0, 0.8);
+            color: #ff6b00;
+            position: relative;
+            z-index: 1;
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            color: #00ffff;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* MAGI 主容器 */
+        .magi-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            gap: 50px;
+            overflow: hidden;
+        }
+
+        /* 中心 MAGI 标识 */
+        .magi-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 4em;
+            font-weight: bold;
+            color: #ff6b00;
+            text-shadow: 0 0 20px rgba(255, 107, 0, 0.8);
+            z-index: 10;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            50% { opacity: 0.7; transform: translate(-50%, -50%) scale(1.1); }
+        }
+
+        /* 人格区域 - 菱形设计 */
+        .personality {
+            width: 300px;
+            height: 300px;
+            position: relative;
+            transform: rotate(45deg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
+            border: 3px solid;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .personality:hover {
+            transform: rotate(45deg) scale(1.05);
+            box-shadow: 0 0 50px currentColor;
+        }
+
+        /* 三个人格的颜色 */
+        #melchior {
+            background-color: rgba(255, 0, 0, 0.3);
+            border-color: #ff0000;
+            color: #ff0000;
+            margin-right: 100px;
+        }
+
+        #balthasar {
+            background-color: rgba(0, 100, 255, 0.3);
+            border-color: #0064ff;
+            color: #0064ff;
+            margin-top: -100px;
+        }
+
+        #casper {
+            background-color: rgba(0, 255, 255, 0.3);
+            border-color: #00ffff;
+            color: #00ffff;
+            margin-left: 100px;
+        }
+
+        /* 人格内容容器 - 反向旋转 */
+        .personality-content {
+            transform: rotate(-45deg);
+            text-align: center;
+            width: 80%;
+            height: 80%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .personality-header {
+            margin-bottom: 20px;
+        }
+
+        .personality-name {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-bottom: 5px;
+            text-shadow: 0 0 10px currentColor;
+        }
+
+        .personality-role {
+            font-size: 1em;
+            opacity: 0.8;
+        }
+
+        .personality-response {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border: 1px solid currentColor;
+            border-radius: 5px;
+            line-height: 1.6;
+            font-size: 1em;
+            margin: 10px 0;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
+        }
+
+        /* 决策结果 */
+        .decision-result {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-top: 10px;
+            text-shadow: 0 0 15px currentColor;
+        }
+
+        /* 连接线和装饰元素 */
+        .connections {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .connection-line {
+            position: absolute;
+            background-color: rgba(255, 107, 0, 0.5);
+            box-shadow: 0 0 10px rgba(255, 107, 0, 0.8);
+        }
+
+        /* 聊天容器 */
+        .chat-container {
+            background-color: rgba(0, 0, 0, 0.8);
+            border: 2px solid #ff6b00;
+            box-shadow: 0 0 20px rgba(255, 107, 0, 0.5);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .chat-history {
+            height: 200px;
+            overflow-y: auto;
+            padding: 15px;
+            background-color: rgba(0, 0, 0, 0.7);
+            border: 1px solid #ff6b00;
+            border-radius: 5px;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            border-left: 4px solid;
+        }
+
+        .message.user {
+            background-color: rgba(0, 255, 255, 0.1);
+            border-left-color: #00ffff;
+            color: #00ffff;
+        }
+
+        .message.magi {
+            background-color: rgba(255, 107, 0, 0.1);
+            border-left-color: #ff6b00;
+            color: #ff6b00;
+        }
+
+        .message-content {
+            margin-bottom: 5px;
+        }
+
+        .message-time {
+            font-size: 0.8em;
+            color: #888;
+            text-align: right;
+        }
+
+        .chat-input {
+            display: flex;
+            gap: 10px;
+        }
+
+        #user-input {
+            flex: 1;
+            padding: 15px;
+            background-color: rgba(0, 0, 0, 0.7);
+            border: 2px solid #ff6b00;
+            border-radius: 5px;
+            color: #ff6b00;
+            font-family: 'Courier New', monospace;
+            font-size: 1em;
+            resize: none;
+            transition: all 0.3s ease;
+        }
+
+        #user-input:focus {
+            outline: none;
+            box-shadow: 0 0 20px rgba(255, 107, 0, 0.5);
+            border-color: #00ffff;
+        }
+
+        button {
+            padding: 15px 30px;
+            background-color: rgba(255, 107, 0, 0.2);
+            border: 2px solid #ff6b00;
+            border-radius: 5px;
+            color: #ff6b00;
+            font-family: 'Courier New', monospace;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        button:hover {
+            background-color: rgba(255, 107, 0, 0.4);
+            box-shadow: 0 0 20px rgba(255, 107, 0, 0.8);
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0) scale(0.95);
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #ff6b00;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 107, 0, 0.8);
+            border-radius: 4px;
+            border: 1px solid #ff6b00;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 107, 0, 1);
+        }
+
+        /* Loading animation */
+        .loading {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: currentColor;
+            animation: spin 1s ease-in-out infinite;
+            transform: rotate(-45deg);
+        }
+
+        @keyframes spin {
+            to { transform: rotate(315deg); }
+        }
+
+        .loading-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+
+        /* 装饰性数字标识 */
+        .number-markers {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .marker {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            border: 3px solid #ff6b00;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #ff6b00;
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 1200px) {
+            .personality {
+                width: 250px;
+                height: 250px;
+            }
+            
+            .magi-center {
+                font-size: 3em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 顶部状态栏 -->
+        <div class="status-bar">
+            <div class="status-item">
+                <span class="status-label">SYSTEM STATUS:</span>
+                <span class="status-value">ONLINE</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">LOCATION:</span>
+                <span class="status-value">TOKYO-3 NERV HQ</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">ACCESS MODE:</span>
+                <span class="status-value">SUPERUSER</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">TIME:</span>
+                <span class="status-value" id="current-time"></span>
+            </div>
+        </div>
+
+        <!-- 主标题 -->
+        <header>
+            <h1>MAGI SYSTEM</h1>
+            <div class="subtitle">Multitasking Artificial Intelligence Gi System</div>
+        </header>
+
+        <!-- MAGI 主容器 -->
+        <div class="magi-container">
+            <!-- 中心 MAGI 标识 -->
+            <div class="magi-center">MAGI</div>
+
+            <!-- 人格区域 -->
+            <div class="personality" id="melchior">
+                <div class="personality-content">
+                    <div class="personality-header">
+                        <div class="personality-name">MELCHIOR-1</div>
+                        <div class="personality-role">SCIENTIST</div>
+                    </div>
+                    <div class="personality-response" id="melchior-response">
+                        <div class="loading-container">
+                            <div class="loading"></div>
+                        </div>
+                    </div>
+                    <div class="decision-result" id="melchior-decision"></div>
+                </div>
+            </div>
+
+            <div class="personality" id="balthasar">
+                <div class="personality-content">
+                    <div class="personality-header">
+                        <div class="personality-name">BALTHASAR-2</div>
+                        <div class="personality-role">MOTHER</div>
+                    </div>
+                    <div class="personality-response" id="balthasar-response">
+                        <div class="loading-container">
+                            <div class="loading"></div>
+                        </div>
+                    </div>
+                    <div class="decision-result" id="balthasar-decision"></div>
+                </div>
+            </div>
+
+            <div class="personality" id="casper">
+                <div class="personality-content">
+                    <div class="personality-header">
+                        <div class="personality-name">CASPER-3</div>
+                        <div class="personality-role">WOMAN</div>
+                    </div>
+                    <div class="personality-response" id="casper-response">
+                        <div class="loading-container">
+                            <div class="loading"></div>
+                        </div>
+                    </div>
+                    <div class="decision-result" id="casper-decision"></div>
+                </div>
+            </div>
+
+            <!-- 装饰性连接线 -->
+            <div class="connections">
+                <div class="connection-line" style="top: 50%; left: 30%; width: 2px; height: 200px; transform: translateX(-50%);"></div>
+                <div class="connection-line" style="top: 50%; right: 30%; width: 2px; height: 200px; transform: translateX(50%);"></div>
+                <div class="connection-line" style="top: 30%; left: 50%; width: 200px; height: 2px; transform: translateY(-50%);"></div>
+            </div>
+
+            <!-- 装饰性数字标识 -->
+            <div class="number-markers">
+                <div class="marker" style="top: 20%; left: 20%;">1</div>
+                <div class="marker" style="top: 20%; right: 20%;">2</div>
+                <div class="marker" style="bottom: 20%; left: 30%;">3</div>
+                <div class="marker" style="bottom: 20%; right: 30%;">1</div>
+            </div>
+        </div>
+
+        <!-- 聊天容器 -->
+        <div class="chat-container">
+            <div class="chat-history" id="chat-history">
+                <div class="message magi">
+                    <div class="message-content">欢迎使用MAGI系统。请输入您的问题或指令。</div>
+                    <div class="message-time">MAGI</div>
+                </div>
+            </div>
+            <div class="chat-input">
+                <textarea id="user-input" placeholder="输入您的问题或指令..."></textarea>
+                <button id="send-btn">发送</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM elements
+        const userInput = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
+        const chatHistory = document.getElementById('chat-history');
+        const melchiorResponse = document.getElementById('melchior-response');
+        const balthasarResponse = document.getElementById('balthasar-response');
+        const casperResponse = document.getElementById('casper-response');
+        const melchiorDecision = document.getElementById('melchior-decision');
+        const balthasarDecision = document.getElementById('balthasar-decision');
+        const casperDecision = document.getElementById('casper-decision');
+        const currentTime = document.getElementById('current-time');
+
+        // Update current time
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleString('zh-CN', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            currentTime.textContent = timeString;
+        }
+
+        // Add message to chat history
+        function addMessage(content, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+            contentDiv.textContent = content;
+            
+            const timeDiv = document.createElement('div');
+            timeDiv.className = 'message-time';
+            timeDiv.textContent = sender === 'user' ? 'You' : 'MAGI';
+            
+            messageDiv.appendChild(contentDiv);
+            messageDiv.appendChild(timeDiv);
+            chatHistory.appendChild(messageDiv);
+            
+            // Scroll to bottom
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+        }
+
+        // Update personality response
+        function updatePersonalityResponse(element, content) {
+            element.innerHTML = `<p>${content.replace(/\n/g, '<br>')}</p>`;
+        }
+
+        // Update decision result
+        function updateDecisionResult(element, decision) {
+            element.textContent = decision;
+        }
+
+        // Show loading state
+        function showLoading(element) {
+            element.innerHTML = `
+                <div class="loading-container">
+                    <div class="loading"></div>
+                </div>
+            `;
+        }
+
+        // Send query to MAGI system
+        async function sendQuery(query) {
+            // Add user message to chat history
+            addMessage(query, 'user');
+            
+            // Show loading states
+            showLoading(melchiorResponse);
+            showLoading(balthasarResponse);
+            showLoading(casperResponse);
+            
+            // Clear previous decisions
+            updateDecisionResult(melchiorDecision, '');
+            updateDecisionResult(balthasarDecision, '');
+            updateDecisionResult(casperDecision, '');
+            
+            try {
+                const response = await fetch('http://localhost:5000/api/magi/ask', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ query })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                // Update responses
+                updatePersonalityResponse(melchiorResponse, data.melchior.response);
+                updatePersonalityResponse(balthasarResponse, data.balthasar.response);
+                updatePersonalityResponse(casperResponse, data.casper.response);
+                
+                // Simulate decision results based on response content
+                // In a real system, this would be determined by the backend
+                const decisions = ['承認', '否定', '承認'];
+                updateDecisionResult(melchiorDecision, decisions[0]);
+                updateDecisionResult(balthasarDecision, decisions[1]);
+                updateDecisionResult(casperDecision, decisions[2]);
+                
+                // Add system response to chat history
+                addMessage('MAGI系统已给出响应，请查看上方三个终端。', 'magi');
+                
+            } catch (error) {
+                console.error('Error:', error);
+                updatePersonalityResponse(melchiorResponse, `ERROR: ${error.message}`);
+                updatePersonalityResponse(balthasarResponse, `ERROR: ${error.message}`);
+                updatePersonalityResponse(casperResponse, `ERROR: ${error.message}`);
+            }
+        }
+
+        // Event listeners
+        sendBtn.addEventListener('click', () => {
+            const query = userInput.value.trim();
+            if (query) {
+                sendQuery(query);
+                userInput.value = '';
+            }
+        });
+
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                const query = userInput.value.trim();
+                if (query) {
+                    sendQuery(query);
+                    userInput.value = '';
+                }
+            }
+        });
+
+        // Initialize system status check
+        async function checkStatus() {
+            try {
+                const response = await fetch('http://localhost:5000/api/magi/status');
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('MAGI System Status:', data);
+                }
+            } catch (error) {
+                console.error('Status Check Error:', error);
+            }
+        }
+
+        // Initialize
+        function init() {
+            // Update time every second
+            updateTime();
+            setInterval(updateTime, 1000);
+            
+            // Check system status
+            checkStatus();
+        }
+
+        // Start initialization
+        init();
+    </script>
+</body>
+</html>
